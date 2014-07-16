@@ -31,14 +31,51 @@ $authenticateForRole = function() {
     };
 };
 
-$app = new \Slim\Slim();
+$app = new \Slim\Slim(array(
+    'view' => new \Slim\Views\Twig(),
+    'templates.path' => 'themes/default'
+));
+$view = $app->view();
+$view->parserOptions = array(
+    'debug' => true,
+    'cache' => dirname(__FILE__) . '/cache'
+);
+
+
+$app->view()->parserExtensions = array(
+    'Twig_Extensions_Extension_I18n'
+);
+
+
+
+$view->parserDirectory = 'Twig';
+//$view->addExtension(new Twig_Extensions_Extension_I18n());
 
 $app->post('/login', function () use ($app, $wallabag) {
     $wallabag->login($app->request->post('login'), $app->request->post('password'));
     $app->redirect($app->urlFor('homepage'));
 });
 
-$app->get('/login', function () use ($wallabag) {
+$app->get('/login', function () use ($app, $wallabag) {
+    $vars = array(
+        'referer' => $wallabag->referer,
+        'view' => $wallabag->view,
+        'poche_url' => Tools::getPocheUrl(),
+        'title' => _('wallabag, a read it later open source system'),
+        'token' => Session::getToken(),
+        'theme' => $wallabag->tpl->getTheme(),
+        'http_auth' => 0
+    );
+    $app->render('login.twig');
+    //echo $wallabag->tpl->render('login.twig', $vars);
+})->name('login');
+
+$app->get('/logout', function () use ($app, $wallabag) {
+    $wallabag->logout();
+    $app->redirect($app->urlFor('homepage'));
+});
+
+$app->get('/archive', $authenticateForRole(), function () use ($wallabag) {
     $vars = array(
         'referer' => $wallabag->referer,
         'view' => $wallabag->view,
@@ -49,13 +86,22 @@ $app->get('/login', function () use ($wallabag) {
         'http_auth' => 0
     );
 
-    echo $wallabag->tpl->render('login.twig', $vars);
-})->name('login');
+    echo $wallabag->tpl->render('home.twig', array_merge($vars, $wallabag->displayView('archive', 0)));
+})->name('archive');
 
-$app->get('/logout', function () use ($app, $wallabag) {
-    $wallabag->logout();
-    $app->redirect($app->urlFor('homepage'));
-});
+$app->get('/fav', $authenticateForRole(), function () use ($wallabag) {
+    $vars = array(
+        'referer' => $wallabag->referer,
+        'view' => $wallabag->view,
+        'poche_url' => Tools::getPocheUrl(),
+        'title' => _('wallabag, a read it later open source system'),
+        'token' => Session::getToken(),
+        'theme' => $wallabag->tpl->getTheme(),
+        'http_auth' => 0
+    );
+
+    echo $wallabag->tpl->render('home.twig', array_merge($vars, $wallabag->displayView('fav', 0)));
+})->name('fav');
 
 $app->get('/', $authenticateForRole(), function () use ($wallabag) {
     $vars = array(
