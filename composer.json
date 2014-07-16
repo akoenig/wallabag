@@ -2,6 +2,7 @@
     "require": {
         "twig/twig": "1.*",
         "twig/extensions": "1.0.*",
-        "umpirsky/twig-gettext-extractor": "1.1.*"
+        "umpirsky/twig-gettext-extractor": "1.1.*",
+        "slim/slim": "2.*"
     }
 }

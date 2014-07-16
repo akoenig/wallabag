@@ -487,13 +487,13 @@ class Poche
      *
      * @return array
      */
-    private function credentials()
+    private function credentials($login, $password)
     {
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             return array($_SERVER['PHP_AUTH_USER'], 'php_auth', true);
         }
-        if (!empty($_POST['login']) && !empty($_POST['password'])) {
-            return array($_POST['login'], $_POST['password'], false);
+        if (!empty($login) && !empty($password)) {
+            return array($login, $password, false);
         }
         if (isset($_SERVER['REMOTE_USER'])) {
             return array($_SERVER['REMOTE_USER'], 'http_auth', true);
@@ -509,9 +509,9 @@ class Poche
      * @todo add the return value
      * @return boolean
      */
-    public function login($referer)
+    public function login($login, $password)
     {
-        list($login,$password,$isauthenticated)=$this->credentials();
+        list($login,$password,$isauthenticated)=$this->credentials($login, $password);
         if($login === false || $password === false) {
             $this->messages->add('e', _('login failed: you have to fill all fields'));
             Tools::logm('login failed');
@@ -544,7 +544,6 @@ class Poche
         $this->user = array();
         Session::logout();
         Tools::logm('logout');
-        Tools::redirect();
     }
 
     /**
