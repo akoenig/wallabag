@@ -50,6 +50,10 @@ class Tools
             || ($https && $_SERVER["SERVER_PORT"] == '443')
             || ($https && $_SERVER["SERVER_PORT"]==SSL_PORT) //Custom HTTPS port detection
             ? '' : ':' . $_SERVER["SERVER_PORT"]);
+        
+        if (isset($_SERVER["HTTP_X_FORWARDED_PORT"])) {
+            $serverport = ':' . $_SERVER["HTTP_X_FORWARDED_PORT"];
+        }
 
         $scriptname = str_replace('/index.php', '/', $_SERVER["SCRIPT_NAME"]);
 
