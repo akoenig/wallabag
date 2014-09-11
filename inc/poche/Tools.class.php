@@ -64,7 +64,7 @@ class Tools
         }
 
         return 'http' . ($https ? 's' : '') . '://'
-            . $host . $serverport . $scriptname;
+            . $host . $serverport . URL_PATH . $scriptname;
     }
 
     public static function redirect($url = '')

@@ -28,6 +28,8 @@
 // Change this if not using the standart port for SSL - i.e you server is behind sslh
 @define ('SSL_PORT', 443);
 
+@define ('URL_PATH', '/')
+
 @define ('MODE_DEMO', FALSE);
 @define ('DEBUG_POCHE', FALSE);
 
